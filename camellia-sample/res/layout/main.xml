@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<ScrollView android:id="@+id/scrollView1"
+		android:layout_width="fill_parent"
+		android:layout_weight="1" android:layout_height="fill_parent">
+		<LinearLayout android:id="@+id/linearLayout1"
+			android:layout_width="fill_parent" android:layout_height="fill_parent">
+			<TextView android:text="" android:id="@+id/textView1"
+				android:layout_width="fill_parent" android:layout_height="fill_parent"></TextView>
+		</LinearLayout>
+	</ScrollView>
+	<LinearLayout android:id="@+id/linearLayout2"
+		android:orientation="horizontal" android:layout_height="fill_parent"
+		android:layout_width="fill_parent" android:layout_weight="8">
+		<Button android:layout_weight="1" android:layout_width="fill_parent"
+			android:layout_height="fill_parent" android:id="@+id/btn_encode"
+			android:text="@string/lbl_encode"></Button>
+		<Button android:layout_weight="1" android:layout_width="fill_parent"
+			android:layout_height="fill_parent" android:text="@string/lbl_decode"
+			android:id="@+id/btn_decode"></Button>
+		<Button android:layout_weight="1" android:layout_width="fill_parent"
+			android:layout_height="fill_parent" android:text="@string/lbl_pref"
+			android:id="@+id/btn_pref"></Button>
+	</LinearLayout>
+</LinearLayout>

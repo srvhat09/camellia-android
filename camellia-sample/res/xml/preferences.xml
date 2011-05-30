@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory android:title="@string/category_env">
+		<EditTextPreference android:key="edt_password"
+			android:summary="@string/summary_passwd" android:title="@string/title_passwd"
+			android:dialogMessage="@string/message_passwd" android:dialogTitle="@string/title_passwd" />
+		<ListPreference android:key="lst_keybitlen"
+			android:entries="@array/ary_keybitlen" android:entryValues="@array/ary_keybitlen_val"
+			android:summary="@string/summary_keybitlen" android:title="@string/title_keybitlen" />
+	</PreferenceCategory>
+	<PreferenceCategory android:title="@string/category_data">
+		<EditTextPreference android:key="edt_plaintext1"
+			android:summary="@string/summary_plaintext" android:title="@string/title_plaintext1"
+			android:dialogMessage="@string/summary_plaintext"
+			android:dialogTitle="@string/title_plaintext1"></EditTextPreference>
+		<EditTextPreference android:summary="@string/summary_plaintext"
+			android:dialogMessage="@string/summary_plaintext"
+			android:dialogTitle="@string/title_plaintext2" android:key="edt_plaintext2"
+			android:title="@string/title_plaintext2"></EditTextPreference>
+		<EditTextPreference android:summary="@string/summary_plaintext"
+			android:dialogMessage="@string/summary_plaintext"
+			android:dialogTitle="@string/title_plaintext3" android:key="edt_plaintext3"
+			android:title="@string/title_plaintext3"></EditTextPreference>
+	</PreferenceCategory>
+</PreferenceScreen>
