@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">camellia-sample</string>
+    <string name="lbl_encode">Encode</string>
+    <string name="lbl_decode">Decode</string>
+    <string name="title_passwd">Encrypted password</string>
+    <string name="summary_passwd">Please enter the encryption password.</string>
+    <string name="message_passwd">Please enter the encryption password. [available ascii-code, 2byte-code]</string>
+    <string name="category_env">Preferences</string>
+    <string name="category_data">Plain text data</string>
+    <string name="title_plaintext1">Plain text data [1st]</string>
+    <string name="summary_plaintext">Please enter the plain text data.</string>
+    <string name="title_plaintext2">Plain text data [2nd]</string>
+    <string name="title_plaintext3">Plain text data [3rd]</string>
+    <string name="lbl_pref">Preferences</string>
+    <string name="title_keybitlen">Specify encryption key bits</string>
+    <string name="summary_keybitlen">Select of encryption key bits.</string>
+    <string name="err_nonecipher">Encrypted data does not exist</string>
+</resources>
