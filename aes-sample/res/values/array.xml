@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="ary_keybitlen">
+		<item>128 bit</item>
+		<item>192 bit</item>
+		<item>256 bit</item>
+	</string-array>
+	<string-array name="ary_keybitlen_val">
+		<item>128</item>
+		<item>192</item>
+		<item>256</item>
+	</string-array>
+</resources>
