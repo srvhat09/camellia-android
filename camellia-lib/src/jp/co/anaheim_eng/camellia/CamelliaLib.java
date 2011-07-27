@@ -63,8 +63,8 @@ public class CamelliaLib {
 		if ((keyBitLen != 128) && (keyBitLen != 192) && (keyBitLen != 256)) {
 			throw new CamelliaLibException("Wrong key bit length of camellia.");
 		}
-		if (CiphersKey.length() < MIN_PASS_LENGTH) {
-			if (CiphersKey.length() == 0) {
+		if ((CiphersKey == null) || (CiphersKey.length() < MIN_PASS_LENGTH)) {
+			if ((CiphersKey == null) || (CiphersKey.length() == 0)) {
 				throw new CamelliaLibException("Nothing of cipher parameter of camellia-android.");
 			} else {
 				throw new CamelliaLibException("Wrong cipher length of camellia-android.");
