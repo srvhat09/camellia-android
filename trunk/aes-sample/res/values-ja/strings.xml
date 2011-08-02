@@ -5,6 +5,9 @@
     <string name="title_passwd">暗号化パスワード</string>
     <string name="summary_passwd">暗号化パスワードを入力してください</string>
     <string name="message_passwd">暗号化パスワードを入力してください[英数字日本語も利用可能]</string>
+    <string name="title_salt">暗号化Saltキー</string>
+    <string name="summary_salt">暗号化Slatキーを入力してください</string>
+    <string name="message_salt">暗号化Saltキーを入力してください[英数字日本語も利用可能]</string>
     <string name="category_env">環境設定</string>
     <string name="category_data">テキストデータ</string>
     <string name="title_plaintext1">テキストデータ　その１</string>

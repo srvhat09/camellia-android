@@ -22,11 +22,14 @@
 package jp.co.anaheim_eng.aes;
 
 import java.security.SecureRandom;
+import java.security.spec.KeySpec;
 import java.util.ArrayList;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
@@ -41,7 +44,8 @@ public class AESLib {
 	private static final int MIN_PASS_LENGTH = 4;
 
 	private static int BitLength;
-	private static byte[] rawKey;
+//	private static byte[] rawKey;
+	private static SecretKey secret;
 	private ArrayList<String> PlainText;
 	private ArrayList<byte[]> Ciphers;
 	
@@ -49,10 +53,11 @@ public class AESLib {
 	 * Default Constructor
 	 * @param keyBitLen
 	 * @param CiphersKey
+	 * @param Salt
 	 * @throws Exception 
 	 * @throws Exception
 	 */
-	public AESLib(int keyBitLen, String CiphersKey) throws Exception {
+	public AESLib(int keyBitLen, String CiphersKey, String Salt) throws Exception {
 		// Check of AESLib's parameters
 		if ((keyBitLen != 128) && (keyBitLen != 192) && (keyBitLen != 256)) {
 			throw new AESLibException("Wrong key bit length of AES.");
@@ -66,7 +71,7 @@ public class AESLib {
 		}
 		
 		BitLength = keyBitLen;
-		rawKey = getRawKey(CiphersKey.getBytes());
+		secret = createSecretKey(CiphersKey.toCharArray(), Salt.getBytes("UTF-8"));
 		PlainText = new ArrayList<String>();
 		Ciphers = new ArrayList<byte[]>();
 	}
@@ -136,15 +141,15 @@ public class AESLib {
 
 		// Call AES encrypt
 		for (String obj : PlainText) {
-			byte[] result = encrypt(rawKey, obj.getBytes());
+			byte[] result = encrypt(obj.getBytes("UTF-8"));
 			Ciphers.add(result);
 		}
 	}
 	
-	private static byte[] encrypt(byte[] raw, byte[] clear) throws Exception {
-	    SecretKeySpec skSpec = new SecretKeySpec(raw, "AES");
+	private static byte[] encrypt(byte[] clear) throws Exception {
+	    SecretKeySpec skeySpec = new SecretKeySpec(secret.getEncoded(), "AES");
 		Cipher cipher = Cipher.getInstance("AES");
-	    cipher.init(Cipher.ENCRYPT_MODE, skSpec);
+	    cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
 	    byte[] encrypted = cipher.doFinal(clear);
 		return encrypted;
 	}
@@ -164,15 +169,15 @@ public class AESLib {
 		
 		// Call AES decrypt
 		for (byte[] obj : Ciphers) {
-			byte[] result = decrypt(rawKey , obj);
+			byte[] result = decrypt(obj);
 			PlainText.add(new String(result));
 		}
 	}
 	
-	private static byte[] decrypt(byte[] raw, byte[] encrypted) throws Exception {
-	    SecretKeySpec skSpec = new SecretKeySpec(raw, "AES");
+	private static byte[] decrypt(byte[] encrypted) throws Exception {
+	    SecretKeySpec skeySpec = new SecretKeySpec(secret.getEncoded(), "AES");
 		Cipher cipher = Cipher.getInstance("AES");
-	    cipher.init(Cipher.DECRYPT_MODE, skSpec);
+	    cipher.init(Cipher.DECRYPT_MODE, skeySpec);
 	    byte[] decrypted = cipher.doFinal(encrypted);
 		return decrypted;
 	}
@@ -183,13 +188,19 @@ public class AESLib {
 	 * @return
 	 * @throws Exception
 	 */
-	private static byte[] getRawKey(byte[] seed) throws Exception {
-		KeyGenerator kgen = KeyGenerator.getInstance("AES");
-		SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
-		sr.setSeed(seed);
-	    kgen.init(BitLength, sr);
-	    SecretKey skey = kgen.generateKey();
-	    byte[] raw = skey.getEncoded();
-	    return raw;
+	private static SecretKey createSecretKey(char[] passwd, byte[] salt) throws Exception {
+		String algorithm = "";
+
+		switch (BitLength) {
+		case 128: algorithm = "PBEWithSHA256And128BitAES-CBC-BC";
+		case 192: algorithm = "PBEWithSHA256And192BitAES-CBC-BC";
+		case 256: algorithm = "PBEWithSHA256And256BitAES-CBC-BC";
+		}
+		
+		SecretKeyFactory factory = SecretKeyFactory.getInstance(algorithm);
+		KeySpec spec = new PBEKeySpec(passwd, salt, BitLength, BitLength);
+		SecretKey base = factory.generateSecret(spec);
+		
+	    return base;
 	}
 }

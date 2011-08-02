@@ -6,6 +6,9 @@
     <string name="title_passwd">Encrypted password</string>
     <string name="summary_passwd">Please enter the encryption password.</string>
     <string name="message_passwd">Please enter the encryption password. [available ascii-code, 2byte-code]</string>
+    <string name="title_salt">Encrypting data with salt</string>
+    <string name="summary_salt">Please enter the encrypting salt.</string>
+    <string name="message_salt">Please enter the encrypting salt. [available ascii-code, 2byte-code]</string>
     <string name="category_env">Preferences</string>
     <string name="category_data">Plain text data</string>
     <string name="title_plaintext1">Plain text data [1st]</string>

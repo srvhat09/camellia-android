@@ -4,6 +4,9 @@
 		<EditTextPreference android:key="edt_password"
 			android:summary="@string/summary_passwd" android:title="@string/title_passwd"
 			android:dialogMessage="@string/message_passwd" android:dialogTitle="@string/title_passwd" />
+		<EditTextPreference android:key="edt_salt"
+			android:summary="@string/summary_salt" android:title="@string/title_salt"
+			android:dialogMessage="@string/message_salt" android:dialogTitle="@string/title_salt" />
 		<ListPreference android:key="lst_keybitlen"
 			android:entries="@array/ary_keybitlen" android:entryValues="@array/ary_keybitlen_val"
 			android:summary="@string/summary_keybitlen" android:title="@string/title_keybitlen" />
