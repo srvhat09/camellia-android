@@ -43,6 +43,7 @@ public class MainActivity extends Activity implements OnClickListener {
     static private ArrayList<String> mPlainText;
     static private ArrayList<byte[]> mCiphers;
     static private String mPassword;
+    static private String mSalt;
     static private int mKeyBitLen;
     
     private Button btnEncode;
@@ -80,13 +81,13 @@ public class MainActivity extends Activity implements OnClickListener {
     				return;
     	        }
     	        // Create AES Library object
-    	        AESLib al = new AESLib(mKeyBitLen, mPassword);
+    	        AESLib al = new AESLib(mKeyBitLen, mPassword, mSalt);
     			al.setPlainText(mPlainText);
     			al.Encode();
     			// Encode result
     			mCiphers = al.getCiphers();
     			StringBuilder sb = new StringBuilder();
-    			sb.append("AES Encode result\n");
+    			sb.append("AES Encode result [" + String.valueOf(mKeyBitLen) + "bit]\n");
     			for (int i=0; i<3; i++) {
 	    			sb.append("No." + String.valueOf(i+1) + "\n");
 	    			sb.append("Plain Text:" + mPlainText.get(i) + "\n");
@@ -103,13 +104,13 @@ public class MainActivity extends Activity implements OnClickListener {
     				return;
     			}
     	        // Create AES Library object
-    			AESLib al = new AESLib(mKeyBitLen, mPassword);
+    			AESLib al = new AESLib(mKeyBitLen, mPassword, mSalt);
     			al.setCiphers(mCiphers);
     			al.Decode();
     			// Decode result
     			mPlainText = al.getPlainText();
     			StringBuilder sb = new StringBuilder();
-    			sb.append("AES Decode result\n");
+    			sb.append("AES Decode result [" + String.valueOf(mKeyBitLen) + "bit]\n");
     			for (int i=0; i<3; i++) {
 	    			sb.append("No." + String.valueOf(i+1) + "\n");
 	    			bytes = mCiphers.get(i);
@@ -135,6 +136,8 @@ public class MainActivity extends Activity implements OnClickListener {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		mPassword  = prefs.getString("edt_password", "");
 		if (mPassword.length() == 0) return false;
+		mSalt  = prefs.getString("edt_salt", "");
+		if (mSalt.length() == 0) return false;
 
 		mKeyBitLen = Integer.parseInt(prefs.getString("lst_keybitlen", ""));
 		if (mKeyBitLen == 0) return false;
