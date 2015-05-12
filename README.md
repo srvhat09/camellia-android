@@ -11,6 +11,7 @@ Japanese
 
 camellia-androidはCamellia（共通鍵暗号方式）のAndroid JNIラッパーとして開発しオープンソースとして公開します。現在のバージョンではUbuntuで開発を行っています。ライブラリのバイナリはどの環境でも簡単に利用出来ます。
 AESLibはJavaラッパーとして開発しオープンソースとして公開します。
+
 What's new(2011/8/2)
 English
 
