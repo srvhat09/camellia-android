@@ -12,6 +12,24 @@ Japanese
 camellia-androidはCamellia（共通鍵暗号方式）のAndroid JNIラッパーとして開発しオープンソースとして公開します。現在のバージョンではUbuntuで開発を行っています。ライブラリのバイナリはどの環境でも簡単に利用出来ます。
 AESLibはJavaラッパーとして開発しオープンソースとして公開します。
 
+What's new(2015/5/26)
+English
+
+camellia-android was new features.
+
+    new: Support of Android 5.x (art).
+    new: Support of Android x86.
+    new: Support of file encode option and decode option.
+
+Japanese
+
+camellia-androidの新機能
+
+    new: Android 5.x対応
+    new: Android x86対応（動作検証済）
+    new: ファイルの暗号化、復号化対応オプション追加
+
+
 What's new(2011/8/2)
 English
 
@@ -55,6 +73,7 @@ aeslibの初版リリース
     aeslibはandroidフレームワークを利用し、camellia-androidとインタフェース互換としています。
     これは、camellia-androidと性能比較用途で作成しました。
     したがって、aeslibはバイナリでの提供は行なっていません。
+
 
 What's new(2011/5/31)
 English
