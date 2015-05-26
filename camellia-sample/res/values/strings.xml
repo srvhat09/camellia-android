@@ -3,6 +3,8 @@
     <string name="app_name">camellia-sample</string>
     <string name="lbl_encode">Encode</string>
     <string name="lbl_decode">Decode</string>
+    <string name="lbl_file_encode">File Encode</string>
+    <string name="lbl_file_decode">File Decode</string>
     <string name="title_passwd">Encrypted password</string>
     <string name="summary_passwd">Please enter the encryption password.</string>
     <string name="message_passwd">Please enter the encryption password. [available ascii-code, 2byte-code]</string>
@@ -16,4 +18,11 @@
     <string name="title_keybitlen">Specify encryption key bits</string>
     <string name="summary_keybitlen">Select of encryption key bits.</string>
     <string name="err_nonecipher">Encrypted data does not exist</string>
+    <string name="category_file">File Encrypt Setting</string>
+    <string name="title_original_file">Original file name</string>
+    <string name="summary_original_file">Please enter the original file name.</string>
+    <string name="title_encrypt_file">Encrypted file name</string>
+    <string name="summary_encrypt_file">Please enter the encrypted file name.</string>
+    <string name="title_temp_path">Temporary directory name</string>
+    <string name="summary_temp_path">Please enter the temporary directory name.</string>
 </resources>

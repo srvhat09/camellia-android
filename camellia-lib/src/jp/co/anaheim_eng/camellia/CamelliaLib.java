@@ -48,6 +48,8 @@ public class CamelliaLib {
 	native static int KeyGen(int keyBitLen, byte[] hashKey);
 	native static int Encode(int keyBitLen, ArrayList<?> PlainText, ArrayList<?> Ciphers);
 	native static int Decode(int keyBitLen, ArrayList<?> Ciphers, ArrayList<?> PlainTexts);
+	native static int FileEncode(int keyBitLen, String FromFile, String ToFile, String TempPath);
+	native static int FileDecode(int keyBitLen, String FromFile, String ToFile, String TempPath);
 	
 	private static int BitLength;
 	private static byte[] HashDigt;
@@ -193,6 +195,60 @@ public class CamelliaLib {
 		if (Decode(BitLength, Ciphers, PlainText) != 0) {
 			throw new CamelliaLibException("camellia-android decode error.");
 		}		
+	}
+
+	/**
+	 * Start camellia file encode
+	 * @param from : Original file
+	 * @param to : Encrypt file
+	 * @param temp : Temporary file directory
+	 * @throws CamelliaLibException 
+	 */
+	public boolean FileEncode(String from, String to, String temp) throws CamelliaLibException {
+		// Check of input & output data
+		if (from.length() == 0) {
+			throw new CamelliaLibException("Original file name is not found.");
+		}
+		if (to.length() == 0) {
+			throw new CamelliaLibException("Encrypt file name is not found.");
+		}
+		
+		// Call camellia-android key generate
+		if (KeyGen(BitLength, HashDigt) != 0) {
+			throw new CamelliaLibException("camellia-android key genarate error.");
+		}
+		// Call camellia-android file encode
+		if (FileEncode(BitLength, from, to, temp) != 0) {
+			throw new CamelliaLibException("camellia-android file encode error.");
+		}
+		return true;
+	}
+
+	/**
+	 * Start camellia file decode
+	 * @param from : Original file
+	 * @param to : Encrypt file
+	 * @param temp : Temporary file directory
+	 * @throws CamelliaLibException 
+	 */
+	public boolean FileDecode(String from, String to, String temp) throws CamelliaLibException {
+		// Check of input & output data
+		if (from.length() == 0) {
+			throw new CamelliaLibException("Encrypt file name is not found.");
+		}
+		if (to.length() == 0) {
+			throw new CamelliaLibException("Original file name is not found.");
+		}
+		
+		// Call camellia-android key generate
+		if (KeyGen(BitLength, HashDigt) != 0) {
+			throw new CamelliaLibException("camellia-android key genarate error.");
+		}
+		// Call camellia-android file encode
+		if (FileDecode(BitLength, from, to, temp) != 0) {
+			throw new CamelliaLibException("camellia-android file decode error.");
+		}
+		return true;
 	}
 
 	/**

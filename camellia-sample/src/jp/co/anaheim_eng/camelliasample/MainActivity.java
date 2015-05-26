@@ -32,6 +32,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -44,10 +45,15 @@ public class MainActivity extends Activity implements OnClickListener {
     static private ArrayList<byte[]> mCiphers;
     static private String mPassword;
     static private int mKeyBitLen;
+    static private String mOriginFile;
+    static private String mEncryptFile;
+    static private String mTempDir;
     
     private Button btnEncode;
 	private Button btnDecode;
 	private Button btnPref;
+	private Button btnFileEncode;
+	private Button btnFileDecode;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,6 +66,10 @@ public class MainActivity extends Activity implements OnClickListener {
         btnDecode.setOnClickListener(this);
         btnPref = (Button)findViewById(R.id.btn_pref);
         btnPref.setOnClickListener(this);
+        btnFileEncode = (Button)findViewById(R.id.btn_file_encode);
+        btnFileEncode.setOnClickListener(this);
+        btnFileDecode = (Button)findViewById(R.id.btn_file_decode);
+        btnFileDecode.setOnClickListener(this);
         
         if (getPreferences() == false) {
 			Intent intent = new Intent(this, MainPreferenceActivity.class);
@@ -81,11 +91,14 @@ public class MainActivity extends Activity implements OnClickListener {
     	        }
     	        // Create Camellia Library object
     	        CamelliaLib cl = new CamelliaLib(mKeyBitLen, mPassword);
+    	        Log.i("CamelliaSmaple", mPassword);
+    	        Log.i("CamelliaSmaple", String.valueOf(Hex.encodeHex(cl.getHashDigt())));
     			cl.setPlainText(mPlainText);
     			cl.Encode();
     			// Encode result
     			mCiphers = cl.getCiphers();
     			StringBuilder sb = new StringBuilder();
+    			sb.append("result size:" + String.valueOf(mCiphers.size()) + "\n");
     			sb.append("Camellia Encode result\n");
     			for (int i=0; i<3; i++) {
 	    			sb.append("No." + String.valueOf(i+1) + "\n");
@@ -115,6 +128,48 @@ public class MainActivity extends Activity implements OnClickListener {
 	    			bytes = mCiphers.get(i);
 	    			sb.append("Cipher    :" + String.valueOf(Hex.encodeHex(bytes)) + "\n");
 	    			sb.append("Plain Text:" + mPlainText.get(i) + "\n");
+    			}
+    			TextView tv = (TextView) findViewById(R.id.textView1);
+    			tv.setText(sb);    			
+    			break;
+    		}
+    		case R.id.btn_file_encode : {
+    	        if (getPreferences() == false) {
+    				Intent intent = new Intent(this, MainPreferenceActivity.class);
+    				startActivity(intent);
+    				return;
+    	        }
+    	        // Create Camellia Library object
+    	        CamelliaLib cl = new CamelliaLib(mKeyBitLen, mPassword);
+    	        Log.i("CamelliaSmaple", mPassword);
+    	        Log.i("CamelliaSmaple", String.valueOf(Hex.encodeHex(cl.getHashDigt())));
+    			boolean result = cl.FileEncode(mOriginFile, mEncryptFile, mTempDir);
+    			// Encode result
+    			StringBuilder sb = new StringBuilder();
+    			if (result) {
+    				sb.append("Camellia File Encode result: success\n");
+    			} else {
+    				sb.append("Camellia File Encode result: failure\n");
+    			}
+    			TextView tv = (TextView) findViewById(R.id.textView1);
+    			tv.setText(sb);    			
+    			break;
+    		}
+    		case R.id.btn_file_decode : {
+    	        if (getPreferences() == false) {
+    				Intent intent = new Intent(this, MainPreferenceActivity.class);
+    				startActivity(intent);
+    				return;
+    	        }
+    	        // Create Camellia Library object
+    	        CamelliaLib cl = new CamelliaLib(mKeyBitLen, mPassword);
+    			boolean result = cl.FileDecode(mEncryptFile, mOriginFile, mTempDir);
+    			// Decode result
+    			StringBuilder sb = new StringBuilder();
+    			if (result) {
+    				sb.append("Camellia File Decode result: success\n");
+    			} else {
+    				sb.append("Camellia File Decode result: failure\n");
     			}
     			TextView tv = (TextView) findViewById(R.id.textView1);
     			tv.setText(sb);    			
@@ -151,6 +206,10 @@ public class MainActivity extends Activity implements OnClickListener {
 		mPlainText.add(PlainText);
 		PlainText = prefs.getString("edt_plaintext3", "");
 		mPlainText.add(PlainText);
+		
+		mOriginFile = prefs.getString("edt_original_file", "");
+		mEncryptFile = prefs.getString("edt_encrypt_file", "");
+		mTempDir = prefs.getString("edt_tenp_path", "");
 		
 		return true;
 	}

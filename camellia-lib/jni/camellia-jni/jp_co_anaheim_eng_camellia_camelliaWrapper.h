@@ -86,6 +86,26 @@ JNIEXPORT jint JNICALL Java_jp_co_anaheim_1eng_camellia_CamelliaLib_Encode
 JNIEXPORT jint JNICALL Java_jp_co_anaheim_1eng_camellia_CamelliaLib_Decode
   (JNIEnv *, jobject, jint, jobject, jobject);
 
+
+/*
+ * Method:	Java_jp_co_anaheim_1eng_camellia_CamelliaLib_FileEncode
+ * Summary:   File encoding of camellia encryption algorithm
+ * Signature: Reiki Hattori.
+ */
+JNIEXPORT jint JNICALL Java_jp_co_anaheim_1eng_camellia_CamelliaLib_FileEncode
+  (JNIEnv *, jobject, jint, jstring, jstring, jstring);
+
+
+/*
+ * Method:	Java_jp_co_anaheim_1eng_camellia_CamelliaLib_FileDecode
+ * Summary:   File decoding of camellia encryption algorithm
+ * Signature: Reiki Hattori.
+ */
+JNIEXPORT jint JNICALL Java_jp_co_anaheim_1eng_camellia_CamelliaLib_FileDecode
+  (JNIEnv *, jobject, jint, jstring, jstring, jstring);
+
+
+
 #ifdef __cplusplus
 }
 #endif
@@ -94,3 +114,5 @@ JNIEXPORT jint JNICALL Java_jp_co_anaheim_1eng_camellia_CamelliaLib_Decode
 
 
 #define DEBUG 1
+#define ERROR 1
+

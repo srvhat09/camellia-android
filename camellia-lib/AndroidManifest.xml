@@ -3,4 +3,7 @@
       package="jp.co.anaheim_eng.camellia.lib"
       android:versionCode="1"
       android:versionName="1.0">
+    <uses-sdk android:minSdkVersion="7"
+          android:targetSdkVersion="17"
+          android:maxSdkVersion="17" />
 </manifest>

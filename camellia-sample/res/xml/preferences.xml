@@ -22,4 +22,18 @@
 			android:dialogTitle="@string/title_plaintext3" android:key="edt_plaintext3"
 			android:title="@string/title_plaintext3"></EditTextPreference>
 	</PreferenceCategory>
+    <PreferenceCategory android:title="@string/category_file">
+        <EditTextPreference android:key="edt_original_file"
+            android:summary="@string/summary_original_file" android:title="@string/title_original_file"
+            android:dialogMessage="@string/summary_original_file"
+            android:dialogTitle="@string/title_original_file"></EditTextPreference>
+        <EditTextPreference android:summary="@string/summary_encrypt_file"
+            android:dialogMessage="@string/summary_encrypt_file"
+            android:dialogTitle="@string/title_encrypt_file" android:key="edt_encrypt_file"
+            android:title="@string/title_encrypt_file"></EditTextPreference>
+        <EditTextPreference android:summary="@string/summary_temp_path"
+            android:dialogMessage="@string/summary_temp_path"
+            android:dialogTitle="@string/title_temp_path" android:key="edt_tenp_path"
+            android:title="@string/title_temp_path"></EditTextPreference>
+    </PreferenceCategory>
 </PreferenceScreen>

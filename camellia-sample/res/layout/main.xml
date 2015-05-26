@@ -13,7 +13,7 @@
 	</ScrollView>
 	<LinearLayout android:id="@+id/linearLayout2"
 		android:orientation="horizontal" android:layout_height="fill_parent"
-		android:layout_width="fill_parent" android:layout_weight="8">
+		android:layout_width="fill_parent" android:layout_weight="7">
 		<Button android:layout_weight="1" android:layout_width="fill_parent"
 			android:layout_height="fill_parent" android:id="@+id/btn_encode"
 			android:text="@string/lbl_encode"></Button>
@@ -24,4 +24,14 @@
 			android:layout_height="fill_parent" android:text="@string/lbl_pref"
 			android:id="@+id/btn_pref"></Button>
 	</LinearLayout>
+    <LinearLayout android:id="@+id/linearLayout2"
+        android:orientation="horizontal" android:layout_height="fill_parent"
+        android:layout_width="fill_parent" android:layout_weight="7">
+        <Button android:layout_weight="1" android:layout_width="fill_parent"
+            android:layout_height="fill_parent" android:id="@+id/btn_file_encode"
+            android:text="@string/lbl_file_encode"></Button>
+        <Button android:layout_weight="1" android:layout_width="fill_parent"
+            android:layout_height="fill_parent" android:text="@string/lbl_file_decode"
+            android:id="@+id/btn_file_decode"></Button>
+    </LinearLayout>
 </LinearLayout>

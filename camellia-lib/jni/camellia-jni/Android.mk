@@ -1,5 +1,8 @@
 LOCAL_PATH := $(call my-dir)
 
+#LOCAL_CFLAGS += -pie -fPIE
+#LOCAL_LDFLAGS += -pie -fPIE
+
 include $(CLEAR_VARS)
 
 LOCAL_MODULE    := camellia-jni

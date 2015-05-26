@@ -21,6 +21,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <jni.h>
 #include <android/log.h>
@@ -28,8 +29,8 @@
 #include "jp_co_anaheim_eng_camellia_camelliaWrapper.h"
 
 #include <string>
-#include <iostream>
 #include <assert.h>
+using namespace std;
 
 #if DEBUG
 #  define DebugInfoLog(...)	((void)__android_log_print(ANDROID_LOG_INFO, "CamelliaWrapper", __VA_ARGS__))
@@ -37,7 +38,6 @@
 #  define DebugInfoLog(...)	do{}while(0)
 #endif
 
-#define ERROR 1
 #if ERROR
 #  define ErrorLog(...)	((void)__android_log_print(ANDROID_LOG_ERROR, "CamelliaWrapper", __VA_ARGS__))
 #else
@@ -45,7 +45,7 @@
 #endif
 
 /*
- * Method:    CheckKeyBitLength
+ * Method:	CheckKeyBitLength
  * Param :	jint keyBitLen				Encode or Decode bit length
  */
 int CheckKeyBitLength(jint keyBitLen)
@@ -54,12 +54,58 @@ int CheckKeyBitLength(jint keyBitLen)
 	return 1;
 }
 
+/*
+ * Method:	GetFileSize
+ * Param :	char* fileName				Encode or Decode bit length
+  */
+long GetFileSize(char* fileName) {
+	FILE* fIn;
+	fpos_t sz;
+#if DEBUG
+	char dbg[1000];						// Testing in a long string, note the buffer
+#endif									// 1000 : Maximized of about 330 character.
+
+	fIn = fopen(fileName, "rb");
+	if (fIn == NULL) {
+#if DEBUG
+		sprintf(dbg, "Cannot open input file. fileName:%s", fileName);
+		ErrorLog(dbg);
+#endif
+		return -1L;
+	}
+
+	fseek(fIn, 0, SEEK_END);
+	fgetpos(fIn, &sz );
+	fclose(fIn);
+
+	return (long)sz;
+}
+
+bool isAllZero(unsigned char* src, int length) {
+#if DEBUG
+	char dbg[20];
+#endif
+
+	int i;
+	for (i=0; i<length; i++) {
+		if (src[i] != '\0') {
+			return false;
+		}
+	}
+
+#if DEBUG
+		sprintf(dbg, "input data is all zero");
+		DebugInfoLog(dbg);
+#endif
+	return true;
+}
+
 #if DEBUG
 /*
  * Debug method
  */
 void DebugChar2Hex(unsigned char *data, int size, char *rtn) {
-	char buf[10] = "";
+	char buf[2000] = "";
 
 	int i;
 	for (i=0; i < size; i++) {
@@ -68,8 +114,14 @@ void DebugChar2Hex(unsigned char *data, int size, char *rtn) {
 	}
 	return;
 }
+void Log_Camellia_Hashkey(unsigned char *hash) {
+	char buf[2000] = "";
+	sprintf(buf, "Hash : ");
+	DebugChar2Hex(hash, sizeof(hash), buf);
+	DebugInfoLog(buf);
+}
 void Log_Camellia_Ekeygen(int keyBitLen, unsigned char *rawKey) {
-	char buf[200] = "";
+	char buf[2000] = "";
 	sprintf(buf, "Camellia with %d-bit key", keyBitLen);
 	DebugInfoLog(buf);
 	sprintf(buf, "K : ");
@@ -77,7 +129,7 @@ void Log_Camellia_Ekeygen(int keyBitLen, unsigned char *rawKey) {
 	DebugInfoLog(buf);
 }
 void Log_Camellia_EncryptBlock(unsigned char *pt_buf, unsigned char *ct_buf) {
-	char buf[200] = "";
+	char buf[2000] = "";
 	sprintf(buf, "[Encrypt] P : ");
 	DebugChar2Hex(pt_buf, 16, buf);
 	DebugInfoLog(buf);
@@ -86,7 +138,7 @@ void Log_Camellia_EncryptBlock(unsigned char *pt_buf, unsigned char *ct_buf) {
 	DebugInfoLog(buf);
 }
 void Log_Camellia_DecryptBlock(unsigned char *pt_buf, unsigned char *ct_buf) {
-	char buf[200] = "";
+	char buf[2000] = "";
 	sprintf(buf, "[Decrypt] C : ");
 	DebugChar2Hex(ct_buf, 16, buf);
 	DebugInfoLog(buf);
@@ -191,6 +243,9 @@ JNIEXPORT jint JNICALL Java_jp_co_anaheim_1eng_camellia_CamelliaLib_KeyGen
 	if (CheckKeyBitLength(keyBitLen) != 0) return 1;
 	// Convert jbyteArray to jbyte
 	jbyte *bArray = env->GetByteArrayElements(hashKey, NULL);
+//	int len = env->GetArrayLength (hashKey);
+//	unsigned char* buf = new unsigned char[len];
+//	env->GetByteArrayRegion (hashKey, 0, len, reinterpret_cast<jbyte*>(buf));
 
 	memset(keyTable, 0, sizeof(keyTable));
 	memset(rawKey, 0, sizeof(rawKey));
@@ -201,6 +256,7 @@ JNIEXPORT jint JNICALL Java_jp_co_anaheim_1eng_camellia_CamelliaLib_KeyGen
 	Camellia_Ekeygen(keyBitLen, rawKey, keyTable);
 
 #if DEBUG
+//	Log_Camellia_Hashkey(buf);
 	Log_Camellia_Ekeygen(keyBitLen, rawKey);
 #endif
 	return 0;
@@ -232,6 +288,8 @@ JNIEXPORT jint JNICALL Java_jp_co_anaheim_1eng_camellia_CamelliaLib_Encode
 		const char *src  = env->GetStringUTFChars((jstring)jPTobj, NULL);
 		jsize cSize = env->GetStringUTFLength((jstring)jPTobj);
 #if DEBUG
+		sprintf(dbg, "src length: %d", cSize);
+		DebugInfoLog(dbg);
 		sprintf(dbg, "src:");
 		DebugChar2Hex((unsigned char*)src, cSize, dbg);
 		DebugInfoLog(dbg);
@@ -266,6 +324,9 @@ JNIEXPORT jint JNICALL Java_jp_co_anaheim_1eng_camellia_CamelliaLib_Encode
 		DebugChar2Hex((unsigned char*)dst, ((cSize%16) == 0 ? cSize : ((int)(cSize/16)+1)*16), dbg);
 		DebugInfoLog(dbg);
 #endif
+		if (cSize > 0) {
+			env->SetByteArrayRegion(dstj, 0, ((cSize%16) == 0 ? cSize : ((int)(cSize/16)+1)*16), dst);
+		}
 		jboolean jbool = env->CallBooleanMethod (Ciphers, al_add_MID, dstj);
 		env->ReleaseStringUTFChars((jstring)jPTobj, src);
 	}
@@ -286,7 +347,7 @@ JNIEXPORT jint JNICALL Java_jp_co_anaheim_1eng_camellia_CamelliaLib_Decode
 	unsigned char ct_buf[17];
 	unsigned char pt_buf[17];
 #if DEBUG
-	char dbg[1000];						// Testing in a long string, note the buffer
+	char dbg[2000];						// Testing in a long string, note the buffer
 #endif									// 1000 : Maximized of about 330 character.
 
 	// Get jobjectArray array numbers
@@ -302,26 +363,30 @@ JNIEXPORT jint JNICALL Java_jp_co_anaheim_1eng_camellia_CamelliaLib_Decode
 		}
 		int cSize = env->GetArrayLength(srcj);
 #if DEBUG
+		sprintf(dbg, "src length: %d", cSize);
+		DebugInfoLog(dbg);
 		sprintf(dbg, "src:");
 		DebugChar2Hex((unsigned char*)src, cSize, dbg);
 		DebugInfoLog(dbg);
 #endif
 		// Create plain text of char
-		char *dst = new char[cSize+1];
-		memset(dst, 0, cSize+1);
+		char *dst = new char[((cSize%16) == 0 ? cSize+1 : ((int)(cSize/16)+1)*16+1)];
+		memset(dst, 0, ((cSize%16) == 0 ? cSize+1 : ((int)(cSize/16)+1)*16+1));
 
 		// Decode to Plain text area
 		for (int j=0; j<cSize; j+=16) {
 			memset(pt_buf, 0, sizeof(pt_buf));
 			memset(ct_buf, 0, sizeof(ct_buf));
 			memcpy(ct_buf, &src[j], ((j+16 < cSize) ? 16 : cSize-j));
-			Camellia_DecryptBlock(keyBitLen, ct_buf, keyTable, pt_buf);
-			for (int k=0; k<strlen((const char*)pt_buf); k++) {
-				dst[j+k] = pt_buf[k];
-			}
+			if (isAllZero(ct_buf, 16) == false) {
+				Camellia_DecryptBlock(keyBitLen, ct_buf, keyTable, pt_buf);
+				for (int k=0; k<strlen((const char*)pt_buf); k++) {
+					dst[j+k] = pt_buf[k];
+				}
 #if DEBUG
-			Log_Camellia_DecryptBlock(pt_buf, ct_buf);
+				Log_Camellia_DecryptBlock(pt_buf, ct_buf);
 #endif
+			}
 		}
 #if DEBUG
 		sprintf(dbg, "dst:");
@@ -333,6 +398,277 @@ JNIEXPORT jint JNICALL Java_jp_co_anaheim_1eng_camellia_CamelliaLib_Decode
 		jboolean jbool = env->CallBooleanMethod (PlainText, al_add_MID, jsDst);
 		delete dst;
 	}
+	return 0;
+}
+
+/*
+ * Method:	Java_jp_co_anaheim_1eng_camellia_CamelliaLib_FileEncode
+ * Param :	JNIEnv *env					JNI
+ *			jobject thiz				JNI
+ *			jint keyBitLen				key bit length (input)
+ *			jstring FromFile			Original file name (input file name)
+ *			jstring ToFile				Encrypted file name (output file name)
+ *			jstring TempPath			Temporary directory path (if FromFile and ToFile are matched to use.)
+ */
+JNIEXPORT jint JNICALL Java_jp_co_anaheim_1eng_camellia_CamelliaLib_FileEncode
+  (JNIEnv *env, jobject thiz, jint keyBitLen, jstring FromFile, jstring ToFile, jstring TempPath)
+{
+	FILE* fIn;
+	FILE* fOut;
+
+	char cFileLen[16];
+	char outName[1024];
+	unsigned char src[17];
+
+	unsigned char ct_buf[17];
+	unsigned char pt_buf[17];
+
+#if DEBUG
+	char dbg[1000];						// Testing in a long string, note the buffer
+#endif									// 1000 : Maximized of about 330 character.
+
+	const char *fromFile  = env->GetStringUTFChars((jstring)FromFile, NULL);
+	const char *toFile  = env->GetStringUTFChars((jstring)ToFile, NULL);
+	const char *tempPath  = env->GetStringUTFChars((jstring)TempPath, NULL);
+#if DEBUG
+	sprintf(dbg, "Input param. fromFile:%s  toFile:%s  tempPath:%s", fromFile, toFile, tempPath);
+	DebugInfoLog(dbg);
+#endif
+
+	// Preparation of the input file
+	fIn = fopen(fromFile, "rb");
+	if (fIn == NULL) {
+#if DEBUG
+		sprintf(dbg, "Cannot open input file. fromFile:%s", fromFile);
+		ErrorLog(dbg);
+#endif
+		return -1;
+	}
+
+	// FromFile and ToFile are match check
+	if (strcmp(fromFile, toFile) == 0) {
+		// Exit if temporary path name is not set
+		if (strlen(tempPath) == 0) {
+#if DEBUG
+			sprintf(dbg, "Temporary directory has not been specified.");
+			ErrorLog(dbg);
+#endif
+			return -1;
+		}
+
+		// Get character position of the last file separator
+		char fileSep[] = {"/"};
+		int fileSepPos = 0;
+		for (int i=0; i<(int)strlen(toFile); i++) {
+			if (strcmp(&toFile[i], fileSep) == 0) {
+				fileSepPos = i;
+#if DEBUG
+				sprintf(dbg, "File Separator Position:%d", fileSepPos);
+				DebugInfoLog(dbg);
+#endif
+			}
+		}
+
+		// To confirm the presence of file separator to a temporary path name.
+		if (strcmp(&tempPath[strlen(tempPath)-1], fileSep) == 0) {
+			memset(outName, 0, sizeof(outName));
+			memcpy(outName, tempPath, sizeof(tempPath));
+			memcpy(&outName[strlen(outName)], &toFile[fileSepPos+1], sizeof(strlen(toFile) - fileSepPos -1));
+		} else {
+			memset(outName, 0, sizeof(outName));
+			memcpy(outName, tempPath, strlen(tempPath));
+			memcpy(&outName[strlen(outName)], fileSep, sizeof(fileSep));
+			memcpy(&outName[strlen(outName)], &toFile[fileSepPos+1], strlen(toFile) - fileSepPos -1);
+		}
+	} else {
+		memset(outName, 0, sizeof(outName));
+		memset(outName, 0, sizeof(outName));
+		memcpy(outName, toFile, strlen(toFile));
+	}
+#if DEBUG
+	sprintf(dbg, "outName:%s", outName);
+	DebugInfoLog(dbg);
+#endif
+
+	// Preparation of the output file
+	fOut = fopen(outName, "wb");
+	if (fOut == NULL) {
+#if DEBUG
+		sprintf(dbg, "Cannot open output file. outName:%s", outName);
+		ErrorLog(dbg);
+#endif
+		return -1;
+	}
+
+	// For Encrypting and decrypting the length of the end of the file is changed,
+	// save the file length to the Encryption file top.
+	long fileLen = GetFileSize((char*)fromFile);
+	memset(cFileLen, 0, sizeof(cFileLen));
+	sprintf(cFileLen, "%015lu", fileLen);
+#if DEBUG
+	sprintf(dbg, "input file size:%s", cFileLen);
+	DebugInfoLog(dbg);
+#endif
+	fwrite(cFileLen, sizeof(char), sizeof(cFileLen), fOut);
+
+	// Encryption of the file body
+	long readSize = 0;
+	while(true) {
+		memset(src, 0, sizeof(src));
+		readSize = fread(src, sizeof(unsigned char), 16, fIn);
+		if (readSize == 0) break;
+		memset(pt_buf, 0, sizeof(pt_buf));
+		memset(ct_buf, 0, sizeof(ct_buf));
+		memcpy(pt_buf, src, 16);
+		Camellia_EncryptBlock(keyBitLen, pt_buf, keyTable, ct_buf);
+		fwrite(ct_buf, sizeof(char), 16, fOut);
+	}
+	fclose(fOut);
+	fclose(fIn);
+
+	if (strcmp(fromFile, toFile) == 0) {
+		remove(toFile);
+		rename(outName, toFile);
+	}
+
+	return 0;
+}
+
+/*
+ * Method:	Java_jp_co_anaheim_1eng_camellia_CamelliaLib_FileDecode
+ * Param :	JNIEnv *env					JNI
+ *			jobject thiz				JNI
+ *			jint keyBitLen				key bit length (input)
+ *			jstring FromFile			Encrypted file name (input file name)
+ *			jstring ToFile				Original file name (output file name)
+ *			jstring TempPath			Temporary directory path (if FromFile and ToFile are matched to use.)
+ */
+JNIEXPORT jint JNICALL Java_jp_co_anaheim_1eng_camellia_CamelliaLib_FileDecode
+  (JNIEnv *env, jobject thiz, jint keyBitLen, jstring FromFile, jstring ToFile, jstring TempPath)
+{
+	FILE* fIn;
+	FILE* fOut;
+
+	char cFileLen[16];
+	char outName[1024];
+	unsigned char src[17];
+
+	unsigned char ct_buf[17];
+	unsigned char pt_buf[17];
+
+#if DEBUG
+	char dbg[1000];						// Testing in a long string, note the buffer
+#endif									// 1000 : Maximized of about 330 character.
+
+	const char *fromFile  = env->GetStringUTFChars((jstring)FromFile, NULL);
+	const char *toFile  = env->GetStringUTFChars((jstring)ToFile, NULL);
+	const char *tempPath  = env->GetStringUTFChars((jstring)TempPath, NULL);
+#if DEBUG
+	sprintf(dbg, "Input param. fromFile:%s  toFile:%s  tempPath:%s", fromFile, toFile, tempPath);
+	DebugInfoLog(dbg);
+#endif
+
+	// Preparation of the input file
+	fIn = fopen(fromFile, "rb");
+	if (fIn == NULL) {
+#if DEBUG
+		sprintf(dbg, "Cannot open input file. fromFile:%s", fromFile);
+		ErrorLog(dbg);
+#endif
+		return -1;
+	}
+
+	// FromFile and ToFile are match check
+	if (strcmp(fromFile, toFile) == 0) {
+		// Exit if temporary path name is not set
+		if (strlen(tempPath) == 0) {
+#if DEBUG
+			sprintf(dbg, "Temporary directory has not been specified.");
+			ErrorLog(dbg);
+#endif
+			return -1;
+		}
+
+		// Get character position of the last file separator
+		char fileSep[] = {"/"};
+		int fileSepPos = 0;
+		for (int i=0; i<(int)strlen(toFile); i++) {
+			if (strcmp(&toFile[i], fileSep) == 0) {
+				fileSepPos = i;
+#if DEBUG
+				sprintf(dbg, "File Separator Position:%d", fileSepPos);
+				DebugInfoLog(dbg);
+#endif
+			}
+		}
+
+		// To confirm the presence of file separator to a temporary path name.
+		if (strcmp(&tempPath[strlen(tempPath)-1], fileSep) == 0) {
+			memset(outName, 0, sizeof(outName));
+			memcpy(outName, tempPath, sizeof(tempPath));
+			memcpy(&outName[strlen(outName)], &toFile[fileSepPos+1], sizeof(strlen(toFile) - fileSepPos -1));
+		} else {
+			memset(outName, 0, sizeof(outName));
+			memcpy(outName, tempPath, strlen(tempPath));
+			memcpy(&outName[strlen(outName)], fileSep, sizeof(fileSep));
+			memcpy(&outName[strlen(outName)], &toFile[fileSepPos+1], strlen(toFile) - fileSepPos -1);
+		}
+	} else {
+		memset(outName, 0, sizeof(outName));
+		memset(outName, 0, sizeof(outName));
+		memcpy(outName, toFile, strlen(toFile));
+	}
+#if DEBUG
+	sprintf(dbg, "outName:%s", outName);
+	DebugInfoLog(dbg);
+#endif
+
+	// Preparation of the output file
+	fOut = fopen(outName, "wb");
+	if (fOut == NULL) {
+#if DEBUG
+		sprintf(dbg, "Cannot open output file. outName:%s", outName);
+		ErrorLog(dbg);
+#endif
+		return -1;
+	}
+
+	// From the beginning of the encrypted file, get the file size
+	long readSize = 0;
+	readSize = fread(cFileLen, sizeof(unsigned char), sizeof(cFileLen), fIn);
+	char *endp;
+	long fileLen = strtol(cFileLen, &endp, 10);
+	printf("file size:%15lu", fileLen);
+#if DEBUG
+	sprintf(dbg, "input file size:%s", cFileLen);
+	DebugInfoLog(dbg);
+#endif
+
+	// Decryption of the file body
+	while(true) {
+		memset(src, 0, sizeof(src));
+		readSize = fread(src, sizeof(unsigned char), 16, fIn);
+		if (readSize == 0) break;
+		memset(pt_buf, 0, sizeof(pt_buf));
+		memset(ct_buf, 0, sizeof(ct_buf));
+		memcpy(ct_buf, src, 16);
+		Camellia_DecryptBlock(keyBitLen, ct_buf, keyTable, pt_buf);
+		fwrite(pt_buf, sizeof(char), ((fileLen<16) ? fileLen : 16), fOut);
+
+		// File length check
+		fileLen = fileLen - 16;
+		if (fileLen <= 0) {
+			break;
+		}
+	}
+	fclose(fOut);
+	fclose(fIn);
+
+	if (strcmp(fromFile, toFile) == 0) {
+		remove(toFile);
+		rename(outName, toFile);
+	}
+
 	return 0;
 }
 

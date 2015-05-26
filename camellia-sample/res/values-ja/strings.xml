@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">camelliaサンプル</string>
     <string name="lbl_encode">暗号化</string>
     <string name="lbl_decode">復号化</string>
+    <string name="lbl_file_encode">ファイル暗号化</string>
+    <string name="lbl_file_decode">ファイル復号化</string>
     <string name="title_passwd">暗号化パスワード</string>
     <string name="summary_passwd">暗号化パスワードを入力してください</string>
     <string name="message_passwd">暗号化パスワードを入力してください[英数字日本語も利用可能]</string>
@@ -15,4 +18,11 @@
     <string name="title_keybitlen">暗号化鍵ビット長</string>
     <string name="summary_keybitlen">暗号化鍵ビット長を選択してください</string>
     <string name="err_nonecipher">暗号化データが存在していません</string>
+    <string name="category_file">ファイル暗号化設定</string>
+    <string name="title_original_file">オリジナルファイル名</string>
+    <string name="summary_original_file">オリジナルファイル名を入力してください。</string>
+    <string name="title_encrypt_file">暗号化ファイル名</string>
+    <string name="summary_encrypt_file">暗号化ファイル名を入力してください。</string>
+    <string name="title_temp_path">テンポラリディレクトリ名</string>
+    <string name="summary_temp_path">テンポラリディレクトリ名を入力してください。</string>
 </resources>
