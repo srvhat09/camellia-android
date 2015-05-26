@@ -9,7 +9,8 @@ camellia-android is a Android JNI wrapper for an open source implementation of t
 AESLib is a Android Java wrapper for an open source implementation of the AES encryption library.
 Japanese
 
-camellia-androidはCamellia（共通鍵暗号方式）のAndroid JNIラッパーとして開発しオープンソースとして公開します。現在のバージョンではUbuntuで開発を行っています。ライブラリのバイナリはどの環境でも簡単に利用出来ます。
+camellia-androidはCamellia（共通鍵暗号方式）のAndroid JNIラッパーとして開発しオープンソースとして公開します。現在のバージョンではMac OS Xで開発を行っています。ライブラリのバイナリはどの環境でも簡単に利用出来ます。
+使用しているNDKはr10dで検証しています。
 AESLibはJavaラッパーとして開発しオープンソースとして公開します。
 
 What's new(2015/5/26)
