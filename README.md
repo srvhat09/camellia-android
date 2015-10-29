@@ -7,6 +7,7 @@ English
 
 camellia-android is a Android JNI wrapper for an open source implementation of the Camellia encryption library. Currently, it only supports Ubuntu, but is based on the ctypes module, so should be easy to add support for Unix/Linux/Windows.
 AESLib is a Android Java wrapper for an open source implementation of the AES encryption library.
+
 Japanese
 
 camellia-androidはCamellia（共通鍵暗号方式）のAndroid JNIラッパーとして開発しオープンソースとして公開します。現在のバージョンではMac OS Xで開発を行っています。ライブラリのバイナリはどの環境でも簡単に利用出来ます。
